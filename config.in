@@ -16,6 +16,11 @@ mainmenu_name 'Uboot Configuration'
                   
 define_bool ASIC_BOARD y
 
+choice 'Serial console'  "UART0 UBOOT_CON_UART0 \
+                           UART1 UBOOT_CON_UART1 \
+                           UART2 UBOOT_CON_UART2
+                         "
+
 if [ "$FPGA_BOARD" = "y" ]; then
 choice 'Chip ID'	 "RT2880 RT2880_FPGA_BOARD \
                           RT3052 RT3052_FPGA_BOARD \

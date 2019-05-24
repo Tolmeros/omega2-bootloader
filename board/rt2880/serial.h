@@ -17,7 +17,19 @@
 #define RT2880_UART1	0x0C00  /* UART Lite */
 #define RT2880_UART2	0x0D00  /* UART Lite */
 #define RT2880_UART3	0x0E00  /* UART Lite */
-#define CFG_RT2880_CONSOLE	RT2880_UART1
+
+# if defined (UBOOT_CON_UART0)
+#  define CFG_RT2880_CONSOLE	RT2880_UART1
+# endif
+
+# if defined (UBOOT_CON_UART1)
+#  define CFG_RT2880_CONSOLE	RT2880_UART2
+# endif
+
+# if defined (UBOOT_CON_UART3)
+#  define CFG_RT2880_CONSOLE	RT2880_UART3
+# endif
+
 #else
 #define RT2880_UART1	0x0500
 #define RT2880_UART2	0x0C00  /* UART Lite */
