@@ -21,6 +21,18 @@ choice 'Serial console'  "UART0 UBOOT_CON_UART0 \
                            UART2 UBOOT_CON_UART2
                          "
 
+choice 'Board type'  "Onion_Omega2 BOARD_OMEGA2 \
+                      Hi-Link_HLK7688A BOARD_HLK7688A
+                     "
+
+bool "CFG_ALT_MEMTEST" CFG_ALT_MEMTEST
+bool "RT2880_U_BOOT_CMD_OPEN" RT2880_U_BOOT_CMD_OPEN
+bool "RALINK_UPGRADE_BY_SERIAL" RALINK_UPGRADE_BY_SERIAL
+bool "ONION_TFTP_FLASH" ONION_TFTP_FLASH
+bool "ONION_TFTP_FLASH_SDRAM" ONION_TFTP_FLASH_SDRAM
+
+comment ""
+
 if [ "$FPGA_BOARD" = "y" ]; then
 choice 'Chip ID'	 "RT2880 RT2880_FPGA_BOARD \
                           RT3052 RT3052_FPGA_BOARD \

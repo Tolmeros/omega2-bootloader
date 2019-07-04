@@ -198,11 +198,17 @@
   #endif
 #endif
 
+#if defined (BOARD_OMEGA2)
+  #define BOARD_NAME "Onion Omega2"
+#elif defined (BOARD_HLK7688A)
+  #define BOARD_NAME "Hi-Link HLK7688A"
+#endif
+
 
 #define SHOW_VER_STR()	\
 	do {	\
 		printf("============================================ \n"); \
-		printf("Onion Omega2 UBoot Version: %s\n", RALINK_LOCAL_VERSION); \
+		printf("%s UBoot Version: %s\n", BOARD_NAME, RALINK_LOCAL_VERSION); \
 		printf("-------------------------------------------- \n"); \
 		printf("%s %s %s\n",CHIP_TYPE, CHIP_VERSION, GMAC_MODE); \
 		printf("DRAM component: %d Mbits %s\n", DRAM_COMPONENT, DDR_INFO); \

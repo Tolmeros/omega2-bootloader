@@ -150,9 +150,14 @@ long int initdram(int board_type)
 	
 }
 
+
 int checkboard (void)
 {
+#if defined (BOARD_OMEGA2)
 	puts ("Board: Onion Omega2 APSoC ");
+#elif defined (BOARD_HLK7688A)
+	puts ("Board: Hi-Link HLK7688A APSoC ");
+#endif
 	return 0;
 }
 
