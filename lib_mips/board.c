@@ -548,7 +548,8 @@ static int display_banner(void)
             " W H A T  W I L L  Y O U  I N V E N T ? /___/\"\n\n");
     //#elif defined (BOARD_HLK7688A)
     #else
-    printf ("\n\n"
+    //printf ("\n\n"
+    puts ("\n\n"
             "      | | | | |     \n"
             "     ###########    \n"
             "   --#         #--  \n"
