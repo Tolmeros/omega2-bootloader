@@ -3067,7 +3067,7 @@ void led_off( void )
 int detect_rst( void )
 {
 	u32 val;
-	val=RALINK_REG(0xb0000624);// Read GPIO 44 (reset button)
+	val=RALINK_REG(0xb0000624);// Read GPIO38 (reset button)
 
     if(val&1<<6)
     {
