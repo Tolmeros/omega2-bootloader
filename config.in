@@ -33,6 +33,11 @@ bool "ONION_TFTP_FLASH_SDRAM" ONION_TFTP_FLASH_SDRAM
 
 comment ""
 
+bool "TEST_DIRTY_DIY_USB_BOOT" TEST_DIRTY_DIY_USB_BOOT
+bool "DEV_BOARD_GPIO_TEST" DEV_BOARD_GPIO_TEST
+
+comment ""
+
 if [ "$FPGA_BOARD" = "y" ]; then
 choice 'Chip ID'	 "RT2880 RT2880_FPGA_BOARD \
                           RT3052 RT3052_FPGA_BOARD \

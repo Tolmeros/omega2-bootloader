@@ -910,6 +910,10 @@ void board_init_f(ulong bootflag)
 #define SEL_LOAD_BOOT_SDRAM                     7
 #define SEL_LOAD_BOOT_WRITE_FLASH_BY_SERIAL     8
 #define SEL_LOAD_BOOT_WRITE_FLASH               9
+#define SEL_DIRTY_DIY_USB_BOOT               	'u'
+#define SEL_GPIO_TEST_OMEGA2					't'
+#define SEL_GPIO_TEST_OMEGA2S					's'
+// zdes4
 //#define SEL_TEST_LEDS                         x
 
 void OperationSelect(void)
@@ -920,6 +924,15 @@ void OperationSelect(void)
     // zh@onion.io
     // update boot menu format
     printf("   [ Enter ]: Boot Omega2.\n");
+
+#ifdef DEV_BOARD_GPIO_TEST
+    printf("   [ %c ]: GPIO test for Omega2.\n", SEL_GPIO_TEST_OMEGA2);
+    printf("   [ %c ]: GPIO test for Omega2S.\n", SEL_GPIO_TEST_OMEGA2S);
+#endif //DEV_BOARD_GPIO_TEST
+
+#ifdef TEST_DIRTY_DIY_USB_BOOT
+    printf("   [ %c ]: Dirty diy boot from usb.\n", SEL_DIRTY_DIY_USB_BOOT);
+#endif //TEST_DIRTY_DIY_USB_BOOT
 
     // zh@onion.io
 #ifdef ONION_WEB_FLASH
@@ -1360,6 +1373,101 @@ int check_image_validation(void)
  */
 
 gd_t gd_data;
+
+void board_boot (cmd_tbl_t *cmdtp, ulong kernel_addr)
+{
+	// zdes1
+	char *argv[2];
+	char addr_str[11];
+	/*
+	SPI Flash мапится в общее адрессное пространство
+	CFG_KERN_ADDR - вот тут лежит ядро
+	*/
+    sprintf(addr_str, "0x%X", kernel_addr);
+    argv[1] = &addr_str[0];
+
+    do_bootm(cmdtp, 0, 2, argv);
+}
+
+#if defined (TEST_DIRTY_DIY_USB_BOOT)
+int dirty_diy_usb_boot (cmd_tbl_t *cmdtp)
+{
+	// zdes3
+	char *argv[5];
+    int argc = 0;
+    char addr_str[11];
+    char *boot_filename = NULL;
+
+	printf("System Load Linux from USB Storage. \n");
+	argc = 2;
+    //argv[1] = "start";
+    argv[1] = "reset";
+
+    do_usb(cmdtp, 0, argc, argv);
+
+    if( usb_stor_curr_dev < 0){
+        printf("Error: No USB Storage found.\n");
+        return -1;
+    }
+
+    boot_filename = getenv ("td_bootfile");
+    if (!boot_filename) {
+		boot_filename = "openwrt.bin";
+	}
+
+    printf("Filename: %s \n* [!] This will take several minutes  *\n", boot_filename);
+
+    argc= 5;
+    argv[1] = "usb";
+    argv[2] = "0";
+
+    // Куда грузить ? там от 8 до 32 МБ !
+    // TEXT_BASE=0xBC000000 - тут лежит UBOOT (это флеш)
+    // linux
+    sprintf(addr_str, "0x%X", CFG_LOAD_ADDR);
+
+    argv[3] = &addr_str[0];
+
+
+    argv[4] = boot_filename;
+
+    //setenv("autostart", "no");
+    // нужно ли ?
+    // if set to "yes", an image loaded using the rarpb, bootp, dhcp, tftp, disk,
+    // or docb commands will be automatically started (by internally calling
+    // the bootm command).
+
+
+    if(do_fat_fsload(cmdtp, 0, argc, argv)){
+        printf("Load `%s` from USB storage failed.\n", argv[4]);
+        return -1;
+    }
+    //ulong NetBootFileXferSize=simple_strtoul(getenv("filesize"), NULL, 16);
+}
+
+int do_dirty_diy_usb_boot (cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
+{
+	switch (argc) {
+	case 1:
+		dirty_diy_usb_boot(cmdtp);
+		break;
+
+	default:
+		printf ("Usage:\n%s\n", cmdtp->usage);
+		return 1;
+	}
+
+}
+
+U_BOOT_CMD(
+	dusbboot,   3,   1,  do_dirty_diy_usb_boot,
+	"dusbboot   - dirty diy boot from USB\n",
+	"\n"
+	"    - dirty diy boot from USB\n"
+
+);
+#endif//TEST_DIRTY_DIY_USB_BOOT
+
 
 void board_init_r (gd_t *id, ulong dest_addr)
 {
@@ -2093,14 +2201,16 @@ void board_init_r (gd_t *id, ulong dest_addr)
 
             // zh@onion.io
             // enable gpio test option
-            case 't':
+#ifdef DEV_BOARD_GPIO_TEST
+            case SEL_GPIO_TEST_OMEGA2:
                 gpio_test(0);
                 break;
 
             // enable Omega2s gpio test option
-            case 's':
+            case SEL_GPIO_TEST_OMEGA2S:
                 gpio_test(1);
                 break;
+#endif //DEV_BOARD_GPIO_TEST
 
 #ifdef ONION_TFTP_FLASH_SDRAM
             case '3':
@@ -2420,16 +2530,15 @@ void board_init_r (gd_t *id, ulong dest_addr)
 #endif
 #endif // RALINK_UPGRADE_BY_USB //
 
+#if defined (TEST_DIRTY_DIY_USB_BOOT)
+            case SEL_DIRTY_DIY_USB_BOOT:
+                dirty_diy_usb_boot (cmdtp);
+                break;
+#endif//TEST_DIRTY_DIY_USB_BOOT
             default:
 
                 printf("\nBoot Linux from Flash.\n");
-
-                char *argv_normal[2];
-                sprintf(addr_str, "0x%X", CFG_KERN_ADDR);
-                argv_normal[1] = &addr_str[0];
-
-                do_bootm(cmdtp, 0, 2, argv_normal);
-
+                board_boot (cmdtp, CFG_KERN_ADDR);
                 break;
 
         } /* end of switch */
@@ -2440,12 +2549,7 @@ void board_init_r (gd_t *id, ulong dest_addr)
     else
     {
         printf("\nBoot Linux from Flash NO RESET PRESSED.\n");
-
-        char *argv_normal[2];
-        sprintf(addr_str, "0x%X", CFG_KERN_ADDR);
-        argv_normal[1] = &addr_str[0];
-
-        do_bootm(cmdtp, 0, 2, argv_normal);
+        board_boot (cmdtp, CFG_KERN_ADDR);
     }
 	/* NOTREACHED - no way out of command loop except booting */
 }
@@ -3080,6 +3184,7 @@ int detect_rst( void )
 
 }
 
+#ifdef DEV_BOARD_GPIO_TEST
 void gpio_test( int vtest ) //Test Omega2 GPIO
 {
 	u32 agpio_cfg,gpio1_mode,gpio2_mode,val;
@@ -3453,4 +3558,4 @@ void gpio_test( int vtest ) //Test Omega2 GPIO
 	RALINK_REG(0xb0000620)=gpio_dat0;
 	RALINK_REG(0xb0000624)=gpio_dat1;
 }
-
+#endif //DEV_BOARD_GPIO_TEST
