@@ -53,10 +53,10 @@
 
 
 /* Status Register bits. */
-#define SR_WIP			1	/* Write in progress */
-#define SR_WEL			2	/* Write enable latch */
-#define SR_BP0			4	/* Block protect 0 */
-#define SR_BP1			8	/* Block protect 1 */
+#define SR_WIP			0x01	/* Write in progress */
+#define SR_WEL			0x02	/* Write enable latch */
+#define SR_BP0			0x04	/* Block protect 0 */
+#define SR_BP1			0x08	/* Block protect 1 */
 #define SR_BP2			0x10	/* Block protect 2 */
 #define SR_EPE			0x20	/* Erase/Program error */
 #define SR_SRWD			0x80	/* SR write protect */
