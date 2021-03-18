@@ -23,12 +23,12 @@
 #define FLASH_PAGESIZE		256
 
 /* Flash opcodes. */
-#define OPCODE_WREN		6	/* Write enable */
-#define OPCODE_WRDI		4	/* Write disable */
-#define OPCODE_RDSR		5	/* Read status register */
-#define OPCODE_WRSR		1	/* Write status register */
-#define OPCODE_READ		3	/* Read data bytes */
-#define OPCODE_PP		2	/* Page program */
+#define OPCODE_WREN		0x06	/* Write enable */
+#define OPCODE_WRDI		0x04	/* Write disable */
+#define OPCODE_RDSR		0x05	/* Read status register */
+#define OPCODE_WRSR		0x01	/* Write status register */
+#define OPCODE_READ		0x03	/* Read data bytes */
+#define OPCODE_PP		0x02	/* Page program */
 #define OPCODE_SE		0xD8	/* Sector erase */
 #define OPCODE_RES		0xAB	/* Read Electronic Signature */
 #define OPCODE_RDID		0x9F	/* Read JEDEC ID */
@@ -50,10 +50,10 @@
 #define OPCODE_RCR			0x35	/* Read Configuration Register */
 
 /* Status Register bits. */
-#define SR_WIP			1	/* Write in progress */
-#define SR_WEL			2	/* Write enable latch */
-#define SR_BP0			4	/* Block protect 0 */
-#define SR_BP1			8	/* Block protect 1 */
+#define SR_WIP			0x01	/* Write in progress */
+#define SR_WEL			0x02	/* Write enable latch */
+#define SR_BP0			0x04	/* Block protect 0 */
+#define SR_BP1			0x08	/* Block protect 1 */
 #define SR_BP2			0x10	/* Block protect 2 */
 #define SR_EPE			0x20	/* Erase/Program error */
 #define SR_SRWD			0x80	/* SR write protect */
