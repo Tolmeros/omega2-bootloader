@@ -22,12 +22,12 @@
 
 
 /* Flash opcodes. */
-#define OPCODE_WREN		6	/* Write enable */
-#define OPCODE_WRDI		4	/* Write disable */
-#define OPCODE_RDSR		5	/* Read status register */
-#define OPCODE_WRSR		1	/* Write status register */
-#define OPCODE_READ		3	/* Read data bytes */
-#define OPCODE_PP		2	/* Page program */
+#define OPCODE_WREN		0x06	/* Write enable */
+#define OPCODE_WRDI		0x04	/* Write disable */
+#define OPCODE_RDSR		0x05	/* Read status register */
+#define OPCODE_WRSR		0x01	/* Write status register */
+#define OPCODE_READ		0x03	/* Read data bytes */
+#define OPCODE_PP		0x02	/* Page program */
 #define OPCODE_SE		0xD8	/* Sector erase */
 #define OPCODE_RES		0xAB	/* Read Electronic Signature */
 #define OPCODE_RDID		0x9F	/* Read JEDEC ID */
